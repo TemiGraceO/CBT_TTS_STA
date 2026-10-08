@@ -135,11 +135,26 @@ SVSF_XML = 8
 
 voice = win32com.client.Dispatch("SAPI.SpVoice")
 voices = voice.GetVoices()
-voice_idx = 0
+voice_idx = 0  # Fallback index
+
+# DYNAMIC NIGERIAN INTONATION SCANNER
+# Loops through all installed system voices to automatically anchor onto a local accent token
+for i in range(voices.Count):
+    voice_description = voices.Item(i).GetDescription()
+    print(f"Detected Voice Profile [{i}]: {voice_description}")
+    if "Nigeria" in voice_description or "Ezinne" in voice_description or "Abeo" in voice_description:
+        voice_idx = i
+        print(f"--> Success: Locked onto Offline Nigerian English Voice at Index [{voice_idx}]")
+        break
+
+# Assign the chosen voice token context globally
+voice.Voice = voices.Item(voice_idx)
+
 speech_rate = SPEECH_RATE
 speech_volume = 100
 voice.Rate = speech_rate
 voice.Volume = speech_volume
+
 
 
 def spell(char):
